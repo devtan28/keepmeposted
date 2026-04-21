@@ -1,10 +1,9 @@
-from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Bookmark, Tag
+from .models import Bookmark
 from rest_framework import generics
 from .serializers import BookmarkSerializer
 
-class BookmarkListCreateView(generics.ListAPIView):
+class BookmarkListCreateView(generics.ListCreateAPIView):
     queryset = Bookmark.objects.all()
     serializer_class = BookmarkSerializer
 
