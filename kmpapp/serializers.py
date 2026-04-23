@@ -7,6 +7,7 @@ class BookmarkSerializer(serializers.ModelSerializer):
         many=True,
         queryset=Tag.objects.all(),
         required=False,
+        allow_empty=False,
         style={"base_template": "select_multiple.html"},
     )
 
