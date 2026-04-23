@@ -8,6 +8,8 @@ from rest_framework.permissions import IsAuthenticated
 class BookmarkListCreateView(generics.ListCreateAPIView):
     serializer_class = BookmarkSerializer
     permission_classes = [IsAuthenticated]
+    filterset_fields = ['tags']
+    search_fields = ['title', 'url']
 
     def get_queryset(self):
         return Bookmark.objects.filter(user=self.request.user)
