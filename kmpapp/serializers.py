@@ -45,3 +45,18 @@ class BookmarkSerializer(serializers.ModelSerializer):
                     "You can only assign your own tags."
                 )
             return value
+        
+class TagSerializer(serializers.ModelSerializer):
+    bookmarks = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Bookmark.objects.all(),
+        required=True,
+        allow_empty=False,
+        style={"base_template": "select_multiple.html"},
+    )
+    class Meta:
+        model = Tag
+        fields = ['id', 'name', 'bookmarks', 'user']
+        read_only_fields = ['user']
+
+
