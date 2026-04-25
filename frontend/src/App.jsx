@@ -119,7 +119,12 @@ function App() {
         <div key ={bookmark.id}>
           <h3>{bookmark.title}</h3>
           <p>{bookmark.url}</p>
-          <p>{bookmark.tags}</p>
+          <p>
+            {bookmark.tags.map((tagId) => {
+              const tag = tags.find((t) => t.id === tagId);
+              return tag ? tag.name : "";
+            }).join(", ")}
+          </p>
         </div>
       ))}
      
