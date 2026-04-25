@@ -8,12 +8,13 @@ function App() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterTag, setFilterTag] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   useEffect(() => {
     const baseUrl = "http://127.0.0.1:8000/api/bookmarks/";
     const params = new URLSearchParams();
 
-    if (searchQuery.trim() !== ""){
+    if (debouncedSearch.trim() !== ""){
       params.append("search", searchQuery)  
     }
 
@@ -41,7 +42,7 @@ function App() {
       setBookmarks(data);
     })
     .catch((err) => console.log(err));
-  }, [searchQuery, filterTag]);
+  }, [debouncedSearch, filterTag]);
 
   useEffect(() => {
   fetch("http://127.0.0.1:8000/api/tags/", {
@@ -54,7 +55,14 @@ function App() {
       setTags(data);
     })
     .catch((err) => console.log(err));
-}, []);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const handleAddBookmark = () => {
     fetch("http://127.0.0.1:8000/api/bookmarks/", {
