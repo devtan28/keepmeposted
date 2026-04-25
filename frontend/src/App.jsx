@@ -90,6 +90,19 @@ function App() {
       .catch((err) => console.log(err));
   }
 
+  const handleDelete = (id) => {
+  fetch(`http://127.0.0.1:8000/api/bookmarks/${id}/`, {
+    method: "DELETE",
+    headers: {
+      Authorization: "Token 2c850741a6917bcb9e0dd37146cf1576526c3d16",
+    },
+  })
+    .then(() => {
+      setBookmarks(bookmarks.filter((b) => b.id !== id));
+    })
+    .catch((err) => console.log(err));
+};
+
   return (
     <div>
       <div style={{ backgroundColor: 'lightblue', padding: '20px'}}>
@@ -125,6 +138,9 @@ function App() {
               return tag ? tag.name : "";
             }).join(", ")}
           </p>
+          <button onClick={() => handleDelete(bookmark.id)}>
+            Delete
+          </button>
         </div>
       ))}
      

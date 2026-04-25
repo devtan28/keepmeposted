@@ -38,6 +38,21 @@ class TagListView(generics.ListAPIView):
         context["request"] = self.request
         return context
     
+
+class BookmarkDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = BookmarkSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        # Good practice: Only let users see/delete their own bookmarks
+        user = self.request.user
+        return Bookmark.objects.filter(user=user)
+    
+    def perform_destroy(self, instance):
+        # 'instance' is the specific bookmark being deleted
+        instance.delete()
+
+
 def home(request):
     return HttpResponse("Hello, Django!")
 
