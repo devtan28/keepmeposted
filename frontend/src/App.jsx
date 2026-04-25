@@ -6,9 +6,28 @@ function App() {
   const [url, setUrl] = useState("");
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterTag, setFilterTag] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/bookmarks/", {
+    const baseUrl = "http://127.0.0.1:8000/api/bookmarks/";
+    const params = new URLSearchParams();
+
+    if (searchQuery.trim() !== ""){
+      params.append("search", searchQuery)  
+    }
+
+    if (filterTag !== "") {
+      params.append("tags", filterTag)
+    }
+    
+    const finalUrl = 
+      params.toString().length > 0
+        ? `${baseUrl}?${params.toString()}`
+        :baseUrl;
+    console.log ("FETCH URL: ", finalUrl);
+
+    fetch(finalUrl, {
       headers: {
         Authorization: "Token 2c850741a6917bcb9e0dd37146cf1576526c3d16",
       },
@@ -22,7 +41,7 @@ function App() {
       setBookmarks(data);
     })
     .catch((err) => console.log(err));
-  }, []);
+  }, [searchQuery, filterTag]);
 
   useEffect(() => {
   fetch("http://127.0.0.1:8000/api/tags/", {
@@ -65,15 +84,39 @@ function App() {
 
   return (
     <div>
+      <div style={{ backgroundColor: 'lightblue', padding: '20px'}}>
+        <input
+        type="text"
+        placeholder='Search bookmarks...'
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <select 
+          value={filterTag}
+          onChange={(e) => {
+            console.log("TAG CHANGED:", e.target.value);
+            setFilterTag(e.target.value);
+          }}
+        >
+          <option value="">All Tags</option>
+          {tags.map((tag) => (
+            <option key={tag.id} value={tag.id}>
+              {tag.name}
+            </option>
+          ))}
+        </select>
+      </div>
       <h1>Bookmarks</h1>
       {bookmarks.map((bookmark) => (
         <div key ={bookmark.id}>
           <h3>{bookmark.title}</h3>
           <p>{bookmark.url}</p>
+          <p>{bookmark.tags}</p>
         </div>
       ))}
+     
+      <div style={{ backgroundColor: 'lightblue', padding: '20px'}}>
       <h2>Add Bookmark</h2>
-
       <input
         type="text"
         placeholder="Title"
@@ -88,7 +131,6 @@ function App() {
         onChange={(e) => setUrl(e.target.value)}
       />
     <h3>Select Tags</h3>
-
       {tags.map((tag) => (
         <label key={tag.id}>
           <input
@@ -111,6 +153,7 @@ function App() {
       <br></br>
       <br></br>
       <button onClick={handleAddBookmark}>Add</button>
+      </div>
     </div>
   );
 }
